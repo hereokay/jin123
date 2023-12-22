@@ -9,5 +9,5 @@ import org.springframework.stereotype.Component;
 @Mapper
 public interface LibraryMapper {
     List<Map> getLibrary();
-    Map getLibraryTotalFee(Integer school_id);
+    List<Map> getLibraryTotalFee();
 }

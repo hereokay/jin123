@@ -15,7 +15,13 @@ public class LibraryBatchService {
     LibraryMapper libraryMapper;
 
     public void LibraryLateFee(){
-        List<Map> map = libraryMapper.getLibrary();
+        List<Map> map = libraryMapper.getLibraryTotalFee();
+
+        for(int i=0; i<map.size(); i++){
+            Map m = map.get(i);
+            Integer school_id = (Integer) m.get("borrower_school_id");
+
+        }
     }
 
 }
