@@ -57,7 +57,7 @@ public class LibraryBatchService {
                 continue;
             }
             else {
-                payment_info.put("user_id",user.getId());
+                payment_info.put("school_id",user.getSchool_id());
                 payment_info.put("service_id",SERVICE_ID);
                 payment_info.put("payment_amount",total_fees);
                 payment_info.put("payment_type",PAYMENT_TYPE);
