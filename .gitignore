@@ -39,3 +39,4 @@ out/
 testCTRL.java
 
 src/main/resources/application-dev.yaml
+src/main/resources/notification-firebase-adminsdk.json
