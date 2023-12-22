@@ -1,6 +1,7 @@
 package com.muselive.bemuselive.service;
 
 import com.muselive.bemuselive.VO.User;
+import com.muselive.bemuselive.common.util.PushMessage;
 import com.muselive.bemuselive.mapper.LibraryMapper;
 import com.muselive.bemuselive.mapper.PaymentMapper;
 import com.muselive.bemuselive.mapper.UserMapper;
@@ -66,15 +67,14 @@ public class LibraryBatchService {
                 payment_info.put("payment_amount",total_fees);
                 payment_info.put("payment_type",PAYMENT_TYPE);
             }
-            log.info("1");
-            //int paymentSuccess = paymentMapper.userGeneralPayment(payment_info);
 
-//            if(paymentSuccess != 1) {
-//                log.error("입력 실패");
-//                continue;
-//            }
-            log.info("1");
-            notificationService.Notification(payment_info);
+            int paymentSuccess = paymentMapper.userGeneralPayment(payment_info);
+
+            if(paymentSuccess != 1) {
+                log.error("입력 실패");
+                continue;
+            }
+            notificationService.Notification(payment_info, PushMessage.LIBRARY_LATE_FEE_NOTIFICATION);
 
             int updateSuccess = libraryMapper.updateComplete(late_fee_info);
             if(updateSuccess == 1){

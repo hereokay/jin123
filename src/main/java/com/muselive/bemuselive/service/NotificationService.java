@@ -20,10 +20,10 @@ public class NotificationService {
 
     private final String UNIT = " 원";
 
-    public void Notification(Map info){
+    public void Notification(Map info, PushMessage pushMessage){
         ServiceDTO dto =  serviceMapper.getServiceInfo(info);
-        String title = PushMessage.LIBRARY_LATE_FEE_NOTIFICATION.getTitle() + info.get("payment_amount") + UNIT;
-        String body = PushMessage.LIBRARY_LATE_FEE_NOTIFICATION.getLeftBody() + dto.getService_name() + PushMessage.LIBRARY_LATE_FEE_NOTIFICATION.getRightBody();
+        String title = pushMessage.getTitle() + info.get("payment_amount") + UNIT;
+        String body = pushMessage.getLeftBody() + dto.getService_name() + pushMessage.getRightBody();
 
         try{
             log.info(title);

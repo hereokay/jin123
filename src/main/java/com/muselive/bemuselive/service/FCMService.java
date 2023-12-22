@@ -11,9 +11,11 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Arrays;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class FCMService {
@@ -43,6 +45,7 @@ public class FCMService {
                     .build();
 
             String response = FirebaseMessaging.getInstance().send(message);
+            //log.info("response : " + response);
         }
         catch (FirebaseMessagingException e){
             e.printStackTrace();
