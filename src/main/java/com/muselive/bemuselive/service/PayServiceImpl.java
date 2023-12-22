@@ -76,7 +76,7 @@ public class PayServiceImpl implements PayService {
             return returnMap;
         }
         else {
-            payment_info.put("user_id",user.getId());
+            payment_info.put("user_id",user.getSchool_id());
             payment_info.put("payment_type",serviceDTO.getPayment_type());
         }
 

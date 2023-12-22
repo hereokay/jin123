@@ -7,7 +7,7 @@
     <select id="getServiceInfo" resultType="com.muselive.bemuselive.VO.ServiceDTO" parameterType="map">
         select *
         from SERVICE_TB
-        where id = #{service_id}
+        where service_id = #{service_id}
     </select>
 
 

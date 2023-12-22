@@ -6,7 +6,7 @@ import lombok.Data;
 @Data
 public class ServiceDTO {
 
-    public Integer id;
+    public Integer service_id;
     public String service_name;
     public String wallet_address;
     public Integer balance;

@@ -4,8 +4,8 @@
 <mapper namespace="com.muselive.bemuselive.mapper.PaymentMapper">
 
     <insert id="userGeneralPayment" useGeneratedKeys="true" keyProperty="payment_id">
-        INSERT INTO MUSE_LIVE.PAYMENT_TB (user_id, service_id, payment_amount, payment_type)
-        VALUES (#{user_id}, #{service_id}, #{payment_amount}, #{payment_type})
+        INSERT INTO MUSE_LIVE.PAYMENT_TB (school_id, service_id, payment_amount, payment_type)
+        VALUES (#{school_id}, #{service_id}, #{payment_amount}, #{payment_type})
     </insert>
 
 
