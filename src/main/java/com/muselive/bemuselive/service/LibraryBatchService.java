@@ -52,20 +52,18 @@ public class LibraryBatchService {
                 continue;
             }
 
-            log.info("1");
+            payment_info.put("school_id",user.getSchool_id());
+            payment_info.put("service_id",SERVICE_ID);
+            payment_info.put("payment_amount",total_fees);
+            payment_info.put("payment_type",PAYMENT_TYPE);
+
             if(user == null){
                 log.error("null값 오류");
                 continue;
             }
             else if( user.getBalance() < total_fees){
-                log.error("잔액 부족 오류");
+                notificationService.Notification(payment_info,PushMessage.NO_BALANCE_NOTIFICATION);
                 continue;
-            }
-            else {
-                payment_info.put("school_id",user.getSchool_id());
-                payment_info.put("service_id",SERVICE_ID);
-                payment_info.put("payment_amount",total_fees);
-                payment_info.put("payment_type",PAYMENT_TYPE);
             }
 
             int paymentSuccess = paymentMapper.userGeneralPayment(payment_info);
