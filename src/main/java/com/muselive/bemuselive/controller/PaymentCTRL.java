@@ -109,6 +109,27 @@ public class PaymentCTRL {
     @PostMapping("/withdraw")
     ResponseEntity<?> withdraw(@RequestBody Map paymentInfo){
 
+        CompletableFuture<TransactionReceipt> future = CompletableFuture.supplyAsync(() ->
+                {
+                    try {
+                        return ethereumService.reqPayment(
+                                (int) paymentInfo.get("school_id"),
+                                0,
+                                (int) paymentInfo.get("payment_amount")
+                        );
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+        );
+
+        // `reqPay`가 완료된 후 실행할 코드
+        future.thenAccept(receipt -> {
+            // 여기에 TransactionReceipt를 처리하는 코드를 넣습니다.
+            // 예를 들어, 영수증 내용을 로깅하거나 확인하는 코드를 구현할 수 있습니다.
+            log.info("withdraw 완료: " + receipt.getTransactionHash());
+        });
+
         int res = payService.Withdraw(paymentInfo);
 
         Map ret = new HashMap();
