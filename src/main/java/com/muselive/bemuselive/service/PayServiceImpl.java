@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -96,8 +97,66 @@ public class PayServiceImpl implements PayService {
 
 
     public int Deposit(Map userInfo){
-        return userMapper.depositCoin(userInfo);
+
+
+        userInfo.put("service_id",1);
+        Integer coin = (Integer) userInfo.get("payment_amount");
+        coin *= -1;
+        userInfo.put("payment_amount",coin);
+        userInfo.put("payment_type",1);
+
+        int ret = paymentMapper.userGeneralPayment(userInfo);
+        log.info("userinfo : {}",userInfo);
+        return ret;
+
     }
+
+
+    public int Withdraw(Map userInfo){
+
+        userInfo.put("service_id",0);
+        Integer coin = (Integer) userInfo.get("payment_amount");
+
+        userInfo.put("payment_amount",coin);
+        userInfo.put("payment_type",0);
+
+
+        int ret = paymentMapper.userGeneralPayment(userInfo);
+
+        log.info("userinfo : {}",userInfo);
+
+        return ret;
+
+    }
+
+    public Map getPaymentInfo(Map info){
+        Map ret = new HashMap<>();
+
+        List<Map> allMonthPayment;
+        Integer donatePayment;
+        List<Map> specificMonthPayment;
+        Integer specificMonthdonatePayment;
+
+
+        allMonthPayment = paymentMapper.getPaymentInfo(info);
+        User user = userMapper.getUserInfo(info);
+        donatePayment = paymentMapper.getDonatePayment(info);
+        specificMonthPayment = paymentMapper.getPaymentInfoByMonth(info);
+        specificMonthdonatePayment = paymentMapper.getDonatePaymentByMonth(info);
+
+
+
+        ret.put("balance",user.getBalance());
+        ret.put("user_name",user.getUser_name());
+
+        ret.put("all_month_payment" ,allMonthPayment);
+        ret.put("donate_payment" ,donatePayment);
+        ret.put("specific_month_payment" ,specificMonthPayment);
+        ret.put("specific_month_donate_payment" ,specificMonthdonatePayment);
+
+        return ret;
+    }
+
 
 
 
