@@ -5,6 +5,9 @@ import com.muselive.bemuselive.VO.User;
 import com.muselive.bemuselive.contract.InhaKrw;
 import com.muselive.bemuselive.mapper.ServiceMapper;
 import com.muselive.bemuselive.mapper.UserMapper;
+import com.pengrad.telegrambot.TelegramBot;
+import com.pengrad.telegrambot.request.SendMessage;
+import com.pengrad.telegrambot.response.SendResponse;
 import jakarta.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,10 +37,15 @@ import static org.web3j.tx.gas.DefaultGasProvider.GAS_PRICE;
 public class EthereumService {
 
     @Value("${ethereum.rpc-url}")
-    private String ethereumRpcUrl;
+    static private String ethereumRpcUrl;
 
     @Value("${owner.private-key}")
-    private String PRIVATE_KEY;
+    static private String PRIVATE_KEY;
+
+    @Value("${owner.tel-token}")
+    static private String botToken;
+
+
 
     @Autowired
     UserMapper userMapper;
@@ -67,9 +75,16 @@ public class EthereumService {
                 );
     }
 
-    public BigInteger getBlockNumber() throws IOException {
-        EthBlockNumber blockNumber = web3j.ethBlockNumber().send();
-        return blockNumber.getBlockNumber();
+
+    public static Boolean sendMessageTelegram(String msg) {
+        Long chatId = 5297812588L;
+
+        // TelegramBot 객체 생성
+        TelegramBot bot = new TelegramBot(botToken);
+
+        // 메시지 보내기
+        SendResponse response = bot.execute(new SendMessage(chatId, msg));
+        return response.isOk();
     }
 
     public TransactionReceipt reqMint(int school_id, int amount) throws Exception {
@@ -81,10 +96,13 @@ public class EthereumService {
         String to = user.getWallet_address();
 
 
-
-
-        return contract.mint(to,
+        TransactionReceipt receipt = contract.mint(to,
                 BigInteger.valueOf(amount).multiply(amountInWei)).send();
+
+        if (!receipt.isStatusOK()){
+            sendMessageTelegram(receipt.getRevertReason());
+        }
+        return receipt;
     }
 
     public TransactionReceipt reqPayment(int school_id, int service_id, Integer amount) throws Exception {
@@ -117,7 +135,10 @@ public class EthereumService {
         );
 
         TransactionReceipt receipt = userContract.transfer(to, BigInteger.valueOf(amount).multiply(amountInWei)).send();
-        System.out.println(receipt.getRevertReason());
+
+        if (!receipt.isStatusOK()){
+            sendMessageTelegram(receipt.getRevertReason());
+        }
         return receipt;
 
     }
