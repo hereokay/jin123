@@ -25,6 +25,9 @@ public class LibraryBatchService {
     @Autowired
     PaymentMapper paymentMapper;
 
+    @Autowired
+    NotificationService notificationService;
+
     public final Integer PAYMENT_TYPE = 2;
     public final Integer SERVICE_ID = 2;
 
@@ -48,6 +51,7 @@ public class LibraryBatchService {
                 continue;
             }
 
+            log.info("1");
             if(user == null){
                 log.error("null값 오류");
                 continue;
@@ -62,12 +66,15 @@ public class LibraryBatchService {
                 payment_info.put("payment_amount",total_fees);
                 payment_info.put("payment_type",PAYMENT_TYPE);
             }
-            int paymentSuccess = paymentMapper.userGeneralPayment(payment_info);
+            log.info("1");
+            //int paymentSuccess = paymentMapper.userGeneralPayment(payment_info);
 
-            if(paymentSuccess != 1) {
-                log.error("입력 실패");
-                continue;
-            }
+//            if(paymentSuccess != 1) {
+//                log.error("입력 실패");
+//                continue;
+//            }
+            log.info("1");
+            notificationService.Notification(payment_info);
 
             int updateSuccess = libraryMapper.updateComplete(late_fee_info);
             if(updateSuccess == 1){
