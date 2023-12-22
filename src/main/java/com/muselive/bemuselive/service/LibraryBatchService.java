@@ -9,10 +9,13 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.web3j.protocol.core.methods.response.TransactionReceipt;
 
 @Slf4j
 @Service
@@ -25,6 +28,9 @@ public class LibraryBatchService {
 
     @Autowired
     PaymentMapper paymentMapper;
+
+    @Autowired
+    private EthereumService ethereumService;
 
     @Autowired
     NotificationService notificationService;
@@ -67,7 +73,28 @@ public class LibraryBatchService {
             }
 
             //Blockchain
+            // `ethereumService.reqPay`를 비동기적으로 실행
+            User finalUser = user;
+            CompletableFuture<TransactionReceipt> future = CompletableFuture.supplyAsync(() ->
+                    {
+                        try {
+                            return ethereumService.reqPayment(
+                                    finalUser.getSchool_id(),
+                                    0,
+                                    total_fees
+                            );
+                        } catch (Exception e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+            );
 
+            // `reqPay`가 완료된 후 실행할 코드
+            future.thenAccept(receipt -> {
+                // 여기에 TransactionReceipt를 처리하는 코드를 넣습니다.
+                // 예를 들어, 영수증 내용을 로깅하거나 확인하는 코드를 구현할 수 있습니다.
+                log.info("Payment 완료: " + receipt.getTransactionHash());
+            });
 
 
             int paymentSuccess = paymentMapper.userGeneralPayment(payment_info);
