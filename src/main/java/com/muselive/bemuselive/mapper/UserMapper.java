@@ -9,5 +9,6 @@ import java.util.Map;
 public interface UserMapper {
 
     User getUserInfo(Map map);
+    int depositCoin(Map map);
 
 }

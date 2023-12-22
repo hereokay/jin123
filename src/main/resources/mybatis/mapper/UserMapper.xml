@@ -13,6 +13,12 @@
     </select>
 
 
+    <update id="depositCoin" parameterType="Map" >
+        UPDATE USER_TB
+        SET balance = balance + #{payment_amount}
+        WHERE school_id = #{school_id}
+    </update>
+
 
 </mapper>
 

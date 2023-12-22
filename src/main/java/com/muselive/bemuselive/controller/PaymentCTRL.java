@@ -28,8 +28,6 @@ public class PaymentCTRL {
     @PostMapping(value = "/payment")
     ResponseEntity<?> test(@RequestBody Map body) throws Exception {
 
-
-
         if(!body.containsKey("school_id")
                 || !body.containsKey("service_id")
                 || !body.containsKey("payment_amount")){
@@ -55,9 +53,28 @@ public class PaymentCTRL {
 
         log.info("paymentSuccess : {}",paymentSuccess);
         return ResponseEntity.ok().body(paymentSuccess);
+    }
 
+    @PostMapping("/deposit")
 
+    ResponseEntity<?> deposit(@RequestBody Map paymentInfo){
+
+        int res = payService.Deposit(paymentInfo);
+
+        Map ret = new HashMap();
+
+        if(res == 1){
+            ret.put("message","성공");
+            return ResponseEntity.ok().body(ret);
+        }
+        else {
+            ret.put("message","실패");
+            return ResponseEntity.badRequest().body(ret);
+        }
 
 
     }
+
+
+
 }

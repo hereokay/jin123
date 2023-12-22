@@ -8,5 +8,7 @@ import java.util.Map;
 public interface PayService {
 
     Map GeneralPayment(Map userInfo);
+    int Deposit(Map userInfo);
+
 
 }

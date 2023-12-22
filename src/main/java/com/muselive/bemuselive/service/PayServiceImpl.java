@@ -91,13 +91,14 @@ public class PayServiceImpl implements PayService {
             returnMap.put("status",0);
             returnMap.put("message","입력 실패");
         }
-
-
         return returnMap;
-
-
-
     }
+
+
+    public int Deposit(Map userInfo){
+        return userMapper.depositCoin(userInfo);
+    }
+
 
 
 
