@@ -10,13 +10,18 @@
     </select>
 
     <select id="getLibraryTotalFee" resultType="Map">
-        SELECT borrower_school_id
+        SELECT borrower_school_id, book_barcode
              , sum(late_fee) as total_fees
         FROM LIBRARY_TB
         WHERE complete=0
-        GROUP BY borrower_school_id
+        group by borrower_school_id, book_barcode;
     </select>
 
+    <update id="updateComplete" >
+        UPDATE LIBRARY_TB
+        SET complete = 1
+        WHERE book_barcode = #{book_barcode}
+    </update>
 
 </mapper>
 

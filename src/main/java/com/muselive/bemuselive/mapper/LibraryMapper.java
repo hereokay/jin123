@@ -10,4 +10,6 @@ import org.springframework.stereotype.Component;
 public interface LibraryMapper {
     List<Map> getLibrary();
     List<Map> getLibraryTotalFee();
+
+    int updateComplete(Map dto);
 }
