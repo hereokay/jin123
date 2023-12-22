@@ -10,7 +10,10 @@ public interface PaymentMapper {
 
     int userGeneralPayment(Map dto);
     List<Map> getPaymentInfo(Map dto);
-    List<Map> getDonatePayment(Map dto);
+    Integer getDonatePayment(Map dto);
+    List<Map> getPaymentInfoByMonth(Map dto);
+    Integer getDonatePaymentByMonth(Map dto);
+
 
 
 }

@@ -2,25 +2,32 @@ package com.muselive.bemuselive.controller;
 
 
 import com.muselive.bemuselive.mapper.UserMapper;
+import com.muselive.bemuselive.service.PayService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.Map;
 
 @RestController
 public class UserInfoCTRL {
 
     @Autowired
-    UserMapper userMapper;
+    PayService payService;
 
-    @PostMapping(value = "/userInfo")
-    ResponseEntity<?> getUserInfo(@RequestBody Map map){
+    @GetMapping(value = "/userInfo")
+    ResponseEntity<?> getUserInfo(@RequestParam Integer school_id,@RequestParam String date_info){
 
-        return ResponseEntity.ok().body("");
+
+        Map params = new HashMap<>();
+
+        params.put("school_id",school_id);
+        params.put("date_info",date_info);
+
+        Map ret =  payService.getPaymentInfo(params);
+
+        return ResponseEntity.ok().body(ret);
 
 
     }

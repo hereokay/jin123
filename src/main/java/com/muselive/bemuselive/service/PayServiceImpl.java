@@ -130,22 +130,29 @@ public class PayServiceImpl implements PayService {
     }
 
     public Map getPaymentInfo(Map info){
-        Map ret = null;
+        Map ret = new HashMap<>();
 
         List<Map> allMonthPayment;
-        List<Map> donatePayment;
+        Integer donatePayment;
+        List<Map> specificMonthPayment;
+        Integer specificMonthdonatePayment;
+
 
         allMonthPayment = paymentMapper.getPaymentInfo(info);
         User user = userMapper.getUserInfo(info);
         donatePayment = paymentMapper.getDonatePayment(info);
+        specificMonthPayment = paymentMapper.getPaymentInfoByMonth(info);
+        specificMonthdonatePayment = paymentMapper.getDonatePaymentByMonth(info);
 
 
 
         ret.put("balance",user.getBalance());
-        ret.put("name",user.getUser_name());
+        ret.put("user_name",user.getUser_name());
 
         ret.put("all_month_payment" ,allMonthPayment);
-        ret.put("donate_payment" ,allMonthPayment);
+        ret.put("donate_payment" ,donatePayment);
+        ret.put("specific_month_payment" ,specificMonthPayment);
+        ret.put("specific_month_donate_payment" ,specificMonthdonatePayment);
 
         return ret;
     }
