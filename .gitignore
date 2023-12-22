@@ -36,4 +36,6 @@ out/
 ### VS Code ###
 .vscode/
 
+testCTRL.java
+
 src/main/resources/application-dev.yaml
