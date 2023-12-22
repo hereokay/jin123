@@ -4,12 +4,18 @@
 <mapper namespace="com.muselive.bemuselive.mapper.LibraryMapper">
 
     <select id="getLibrary" resultType="Map">
-        SELECT borrower_school_id, sum(late_fee) as total_fees
+        SELECT borrower_school_id
+             , sum(late_fee) as total_fees
         FROM LIBRARY_TB
         WHERE complete=0
         GROUP BY borrower_school_id
     </select>
 
+    <select id="getUserBySchoolId" resultType="Map">
+        SELECT *
+        FROM USER_TB
+        WHERE school_id = #{school_id}
+    </select>
 </mapper>
 
 
