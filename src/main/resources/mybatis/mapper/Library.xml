@@ -6,7 +6,7 @@
     <select id="getLibrary" resultType="Map">
         SELECT *
         FROM LIBRARY_TB
-        WHERE id = #{library_id}
+        WHERE library_id = #{library_id}
     </select>
 
     <select id="getLibraryTotalFee" resultType="Map">
