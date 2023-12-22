@@ -15,6 +15,7 @@ import org.web3j.abi.datatypes.Int;
 import org.web3j.crypto.Credentials;
 import org.web3j.protocol.Web3j;
 import org.web3j.protocol.core.methods.response.EthBlockNumber;
+import org.web3j.protocol.core.methods.response.EthGetBalance;
 import org.web3j.protocol.core.methods.response.TransactionReceipt;
 import org.web3j.protocol.http.HttpService;
 import org.web3j.tx.RawTransactionManager;
@@ -43,7 +44,7 @@ public class EthereumService {
 
     @Autowired
     ServiceMapper serviceMapper;
-
+    private final BigInteger amountInWei = new BigInteger("1000000000000000000"); // 1 ETH
 
 
     private Web3j web3j;
@@ -76,6 +77,7 @@ public class EthereumService {
 
 
 
+
         User user = null;
 
         Map userinfo = new HashMap<>();
@@ -87,7 +89,8 @@ public class EthereumService {
         String to = user.getWallet_address();
 
 
-        return contract.mint(to, BigInteger.valueOf(amount)).send();
+        return contract.mint(to,
+                BigInteger.valueOf(amount).multiply(amountInWei)).send();
     }
 
     public TransactionReceipt reqPay(int school_id, int service_id, Integer amount) throws Exception {
@@ -108,7 +111,7 @@ public class EthereumService {
         String from = user.getWallet_address();
 
 
-        return contract.transferFrom(from, to, BigInteger.valueOf(amount)).send();
+        return contract.transferFrom(from, to, BigInteger.valueOf(amount).multiply(amountInWei)).send();
 
     }
 
