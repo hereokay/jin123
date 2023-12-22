@@ -34,4 +34,18 @@ public class NotificationService {
             log.error(e.getMessage());
         }
     }
+
+    public void NotificationNoService(Map info, PushMessage pushMessage){
+        String title = pushMessage.getTitle() + info.get("payment_amount") + UNIT;
+        String body = pushMessage.getLeftBody() + pushMessage.getRightBody();
+
+        try{
+            log.info(title);
+            log.info(body);
+            fcmService.sendMessageTo(title, body);
+        }
+        catch (IOException e){
+            log.error(e.getMessage());
+        }
+    }
 }
