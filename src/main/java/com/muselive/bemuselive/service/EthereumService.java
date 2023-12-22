@@ -49,15 +49,14 @@ public class EthereumService {
 
     private Web3j web3j;
     private Credentials credentials;
-
+    private final long chainId = 80001;
+    private final String tokenAddress = "0xbF603CDb8367bd6600df47E659209fA57682d6D5";
     private InhaKrw contract;
     @PostConstruct
     public void init() {
         this.web3j = Web3j.build(new HttpService(ethereumRpcUrl));
         this.credentials = Credentials.create(PRIVATE_KEY);
 
-        long chainId = 80001;
-        String tokenAddress = "0xbF603CDb8367bd6600df47E659209fA57682d6D5";
         TransactionManager txManager = new RawTransactionManager(web3j, credentials, chainId);
 
         this.contract = InhaKrw.load(
@@ -75,18 +74,13 @@ public class EthereumService {
 
     public TransactionReceipt reqMint(int school_id, int amount) throws Exception {
 
-
-
-
         User user = null;
-
         Map userinfo = new HashMap<>();
         userinfo.put("school_id",school_id);
-
-
         user = userMapper.getUserInfo(userinfo);
-
         String to = user.getWallet_address();
+
+
 
 
         return contract.mint(to,
@@ -108,10 +102,23 @@ public class EthereumService {
         serviceDTO = serviceMapper.getServiceInfo(paymentinfo);
 
         String to = serviceDTO.getWallet_address();
+        String pk = user.private_key;
         String from = user.getWallet_address();
 
+        Credentials userCredentials = Credentials.create(pk);
+        TransactionManager txManager = new RawTransactionManager(web3j, userCredentials, chainId);
 
-        return contract.transferFrom(from, to, BigInteger.valueOf(amount).multiply(amountInWei)).send();
+        InhaKrw userContract = InhaKrw.load(
+                tokenAddress,
+                web3j,
+                txManager,
+                amountInWei.divide(new BigInteger(String.valueOf(1000000000))).multiply(new BigInteger(String.valueOf(30))),
+                new BigInteger(String.valueOf(150000))
+        );
+
+        TransactionReceipt receipt = userContract.transfer(to, BigInteger.valueOf(amount).multiply(amountInWei)).send();
+        System.out.println(receipt.getRevertReason());
+        return receipt;
 
     }
 
