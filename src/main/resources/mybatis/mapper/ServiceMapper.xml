@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.muselive.bemuselive.mapper.ServiceMapper">
+
+
+    <select id="getServiceInfo" resultType="com.muselive.bemuselive.VO.ServiceDTO" parameterType="map">
+        select *
+        from SERVICE_TB
+        where id = #{service_id}
+    </select>
+
+
+
+</mapper>
+
+
