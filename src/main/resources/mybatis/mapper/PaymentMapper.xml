@@ -11,10 +11,13 @@
     <select id="getPaymentInfo" parameterType="map" resultType="map">
 
         select IF(payment_amount >= 0 ,payment_amount, payment_amount * -1 ) as payment_amount,
-        service_name
+        service_name,
+        payment_datetime
         from PAYMENT_TB PT
         join SERVICE_TB ST on PT.service_id = ST.service_id
-        where school_id = #{school_id};
+        where school_id = #{school_id}
+        order by payment_datetime desc ;
+
 
     </select>
 
@@ -29,11 +32,14 @@
 
     <select id="getPaymentInfoByMonth" parameterType="map" resultType="map">
         select IF(payment_amount >= 0 ,payment_amount, payment_amount * -1 ) as payment_amount,
-               service_name
+               service_name,
+               payment_datetime
         from PAYMENT_TB PT
                  join SERVICE_TB ST on PT.service_id = ST.service_id
         where school_id = #{school_id}
           and DATE_FORMAT(payment_datetime, '%Y-%m') = #{date_info}
+        order by payment_datetime desc;
+
     </select>
 
     <select id="getDonatePaymentByMonth" parameterType="map" resultType="int">
