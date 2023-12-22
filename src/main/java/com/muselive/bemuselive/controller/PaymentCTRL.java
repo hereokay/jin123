@@ -26,80 +26,57 @@ public class PaymentCTRL {
     EthereumService ethereumService;
 
 
-    @PostMapping(value = "/payment")
-    ResponseEntity<?> payment(@RequestBody Map body) throws Exception {
+    @PostMapping(value="/payment")
+    ResponseEntity<?>payment(@RequestBody Map body)throws Exception{
 
         if(!body.containsKey("school_id")
-                || !body.containsKey("service_id")
-                || !body.containsKey("payment_amount")){
+                ||!body.containsKey("service_id")
+                ||!body.containsKey("payment_amount")){
             return ResponseEntity.badRequest().body(
-                    "wrong param"
+                    "wrongparam"
             );
         }
 
-        // Blockchain
-        // `ethereumService.reqPay`를 비동기적으로 실행
-        CompletableFuture<TransactionReceipt> future = CompletableFuture.supplyAsync(() ->
-                {
-                    try {
-                        return ethereumService.reqPayment(
-                                (int) body.get("school_id"),
-                                (int) body.get("service_id"),
-                                (int) body.get("payment_amount")
-                        );
-                    } catch (Exception e) {
-                        throw new RuntimeException(e);
-                    }
-                }
+        TransactionReceipt receipt=ethereumService.reqPayment(
+                (int)body.get("school_id"),
+                (int)body.get("service_id"),
+                (int)body.get("payment_amount")
         );
 
-        // `reqPay`가 완료된 후 실행할 코드
-        future.thenAccept(receipt -> {
-            // 여기에 TransactionReceipt를 처리하는 코드를 넣습니다.
-            // 예를 들어, 영수증 내용을 로깅하거나 확인하는 코드를 구현할 수 있습니다.
-            log.info("Payment 완료: " + receipt.getTransactionHash());
-        });
+        if(!receipt.isStatusOK()){
+            return ResponseEntity.badRequest().body(receipt.getRevertReason());
+        }
 
-        // DB
-        Map paymentSuccess =  payService.GeneralPayment(body);
+//DB
+        Map paymentSuccess=payService.GeneralPayment(body);
 
-        log.info("paymentSuccess : {}",paymentSuccess);
+        log.info("paymentSuccess:{}",paymentSuccess);
         return ResponseEntity.ok().body(paymentSuccess);
     }
 
 
+
     @PostMapping("/deposit")
-    ResponseEntity<?> deposit(@RequestBody Map paymentInfo) throws Exception {
+    ResponseEntity<?>deposit(@RequestBody Map paymentInfo)throws Exception{
 
 
-        CompletableFuture<TransactionReceipt> future = CompletableFuture.supplyAsync(() ->
-                {
-                    try {
-                        return ethereumService.reqMint(
-                                (int) paymentInfo.get("school_id"),
-                                (int) paymentInfo.get("payment_amount")
-                        );
-                    } catch (Exception e) {
-                        throw new RuntimeException(e);
-                    }
-                }
+        TransactionReceipt receipt=ethereumService.reqMint(
+                (int)paymentInfo.get("school_id"),
+                (int)paymentInfo.get("payment_amount")
         );
 
-        // `reqPay`가 완료된 후 실행할 코드
-        future.thenAccept(receipt -> {
-            // 여기에 TransactionReceipt를 처리하는 코드를 넣습니다.
-            // 예를 들어, 영수증 내용을 로깅하거나 확인하는 코드를 구현할 수 있습니다.
-            log.info("Deposit 완료: " + receipt.getTransactionHash());
-        });
+        if(!receipt.isStatusOK()){
+            return ResponseEntity.badRequest().body(receipt.getRevertReason());
+        }
 
-        int res = payService.Deposit(paymentInfo);
-        Map ret = new HashMap();
+        int res=payService.Deposit(paymentInfo);
+        Map ret=new HashMap();
 
-        if(res == 1){
+        if(res==1){
             ret.put("message","성공");
             return ResponseEntity.ok().body(ret);
         }
-        else {
+        else{
             ret.put("message","실패");
             return ResponseEntity.badRequest().body(ret);
         }
@@ -107,42 +84,33 @@ public class PaymentCTRL {
 
 
     @PostMapping("/withdraw")
-    ResponseEntity<?> withdraw(@RequestBody Map paymentInfo){
+    ResponseEntity<?>withdraw(@RequestBody Map paymentInfo)throws Exception{
 
-        CompletableFuture<TransactionReceipt> future = CompletableFuture.supplyAsync(() ->
-                {
-                    try {
-                        return ethereumService.reqPayment(
-                                (int) paymentInfo.get("school_id"),
-                                0,
-                                (int) paymentInfo.get("payment_amount")
-                        );
-                    } catch (Exception e) {
-                        throw new RuntimeException(e);
-                    }
-                }
+        TransactionReceipt receipt=ethereumService.reqPayment(
+                (int)paymentInfo.get("school_id"),
+                0,
+                (int)paymentInfo.get("payment_amount")
         );
 
-        // `reqPay`가 완료된 후 실행할 코드
-        future.thenAccept(receipt -> {
-            // 여기에 TransactionReceipt를 처리하는 코드를 넣습니다.
-            // 예를 들어, 영수증 내용을 로깅하거나 확인하는 코드를 구현할 수 있습니다.
-            log.info("withdraw 완료: " + receipt.getTransactionHash());
-        });
+        if(!receipt.isStatusOK()){
+            return ResponseEntity.badRequest().body(receipt.getRevertReason());
+        }
 
-        int res = payService.Withdraw(paymentInfo);
 
-        Map ret = new HashMap();
+        int res=payService.Withdraw(paymentInfo);
 
-        if(res == 1){
+        Map ret=new HashMap();
+
+        if(res==1){
             ret.put("message","성공");
             return ResponseEntity.ok().body(ret);
         }
-        else {
+        else{
             ret.put("message","실패");
             return ResponseEntity.badRequest().body(ret);
         }
     }
+
 
 
 }
