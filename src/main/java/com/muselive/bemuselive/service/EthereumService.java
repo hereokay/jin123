@@ -17,6 +17,9 @@ import org.web3j.protocol.Web3j;
 import org.web3j.protocol.core.methods.response.EthBlockNumber;
 import org.web3j.protocol.core.methods.response.TransactionReceipt;
 import org.web3j.protocol.http.HttpService;
+import org.web3j.tx.RawTransactionManager;
+import org.web3j.tx.TransactionManager;
+import org.web3j.tx.gas.DefaultGasProvider;
 
 import java.io.IOException;
 import java.math.BigInteger;
@@ -45,13 +48,23 @@ public class EthereumService {
 
     private Web3j web3j;
     private Credentials credentials;
+
     private InhaKrw contract;
     @PostConstruct
     public void init() {
         this.web3j = Web3j.build(new HttpService(ethereumRpcUrl));
         this.credentials = Credentials.create(PRIVATE_KEY);
+
+        long chainId = 80001;
+        String tokenAddress = "0xbF603CDb8367bd6600df47E659209fA57682d6D5";
+        TransactionManager txManager = new RawTransactionManager(web3j, credentials, chainId);
+
         this.contract = InhaKrw.load(
-                "0xa17c5dD460CA3A24607615c677f44891eA88758C",web3j, credentials, GAS_PRICE, GAS_LIMIT);
+                tokenAddress,
+                web3j,
+                txManager,
+                new DefaultGasProvider()
+                );
     }
 
     public BigInteger getBlockNumber() throws IOException {
