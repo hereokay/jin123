@@ -12,6 +12,7 @@ import org.web3j.protocol.core.methods.response.TransactionReceipt;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 
 
 @Slf4j
@@ -37,19 +38,30 @@ public class PaymentCTRL {
         }
 
         // Blockchain
-        TransactionReceipt receipt = ethereumService.reqPay(
-                (int) body.get("school_id"),
-                (int) body.get("service_id"),
-                (int) body.get("payment_amount")
+        // `ethereumService.reqPay`를 비동기적으로 실행
+        CompletableFuture<TransactionReceipt> future = CompletableFuture.supplyAsync(() ->
+                {
+                    try {
+                        return ethereumService.reqPay(
+                                (int) body.get("school_id"),
+                                (int) body.get("service_id"),
+                                (int) body.get("payment_amount")
+                        );
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                }
         );
 
-        if (!receipt.isStatusOK()){
-            return ResponseEntity.badRequest().body("transaction fail");
-        }
+        // `reqPay`가 완료된 후 실행할 코드
+        future.thenAccept(receipt -> {
+            // 여기에 TransactionReceipt를 처리하는 코드를 넣습니다.
+            // 예를 들어, 영수증 내용을 로깅하거나 확인하는 코드를 구현할 수 있습니다.
+            log.info("Payment 완료: " + receipt.getTransactionHash());
+        });
 
         // DB
         Map paymentSuccess =  payService.GeneralPayment(body);
-        paymentSuccess.put("txHash",receipt.getTransactionHash());
 
         log.info("paymentSuccess : {}",paymentSuccess);
         return ResponseEntity.ok().body(paymentSuccess);
@@ -60,20 +72,28 @@ public class PaymentCTRL {
     ResponseEntity<?> deposit(@RequestBody Map paymentInfo) throws Exception {
 
 
-        TransactionReceipt receipt = ethereumService.reqMint(
-                (int) paymentInfo.get("school_id"),
-                (int) paymentInfo.get("payment_amount")
+        CompletableFuture<TransactionReceipt> future = CompletableFuture.supplyAsync(() ->
+                {
+                    try {
+                        return ethereumService.reqMint(
+                                (int) paymentInfo.get("school_id"),
+                                (int) paymentInfo.get("payment_amount")
+                        );
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                }
         );
 
-        if(!receipt.isStatusOK()){
-            return ResponseEntity.badRequest().body("transaction fail");
-        }
-
+        // `reqPay`가 완료된 후 실행할 코드
+        future.thenAccept(receipt -> {
+            // 여기에 TransactionReceipt를 처리하는 코드를 넣습니다.
+            // 예를 들어, 영수증 내용을 로깅하거나 확인하는 코드를 구현할 수 있습니다.
+            log.info("Deposit 완료: " + receipt.getTransactionHash());
+        });
 
         int res = payService.Deposit(paymentInfo);
         Map ret = new HashMap();
-
-        ret.put("txHash",receipt.getTransactionHash());
 
         if(res == 1){
             ret.put("message","성공");
