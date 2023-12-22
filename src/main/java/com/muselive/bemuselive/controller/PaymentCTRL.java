@@ -55,13 +55,25 @@ public class PaymentCTRL {
         return ResponseEntity.ok().body(paymentSuccess);
     }
 
-    @PostMapping("/deposit")
 
-    ResponseEntity<?> deposit(@RequestBody Map paymentInfo){
+    @PostMapping("/deposit")
+    ResponseEntity<?> deposit(@RequestBody Map paymentInfo) throws Exception {
+
+
+        TransactionReceipt receipt = ethereumService.reqMint(
+                (int) paymentInfo.get("school_id"),
+                (int) paymentInfo.get("payment_amount")
+        );
+
+        if(!receipt.isStatusOK()){
+            return ResponseEntity.badRequest().body("transaction fail");
+        }
+
 
         int res = payService.Deposit(paymentInfo);
-
         Map ret = new HashMap();
+
+        ret.put("txHash",receipt.getTransactionHash());
 
         if(res == 1){
             ret.put("message","성공");
