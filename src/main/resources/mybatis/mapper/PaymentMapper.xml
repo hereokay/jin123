@@ -8,9 +8,42 @@
         VALUES (#{school_id}, #{service_id}, #{payment_amount}, #{payment_type})
     </insert>
 
+    <select id="getPaymentInfo" parameterType="map" resultType="map">
+
+        select IF(payment_amount >= 0 ,payment_amount, payment_amount * -1 ) as payment_amount,
+        service_name
+        from PAYMENT_TB PT
+        join SERVICE_TB ST on PT.service_id = ST.service_id
+        where school_id = #{school_id};
+
+    </select>
+
+    <select id="getDonatePayment" parameterType="map" resultType="map">
+        select sum(payment_amount) * 0.095 as payment_amount
+        from PAYMENT_TB PT
+                 join SERVICE_TB ST on PT.service_id = ST.service_id
+        where school_id = #{school_id}
+          and PT.payment_type = 3;
+    </select>
 
 
+    <select id="getPaymentInfoByMonth">
+        select IF(payment_amount >= 0 ,payment_amount, payment_amount * -1 ) as payment_amount,
+               service_name
+        from PAYMENT_TB PT
+                 join SERVICE_TB ST on PT.service_id = ST.service_id
+        where school_id = #{school_id}
+          and DATE_FORMAT(DATE, '%Y-%m') = #{date_info}
+    </select>
 
+    <select id="getDonatePaymentByMonth">
+        select sum(payment_amount) * 0.095 as payment_amount
+        from PAYMENT_TB PT
+                 join SERVICE_TB ST on PT.service_id = ST.service_id
+        where school_id = #{school_id}
+          and PT.payment_type = 3
+          and DATE_FORMAT(DATE, '%Y-%m') = #{date_info}
+    </select>
 
 </mapper>
 

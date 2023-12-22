@@ -9,5 +9,8 @@ import java.util.Map;
 public interface PaymentMapper {
 
     int userGeneralPayment(Map dto);
+    List<Map> getPaymentInfo(Map dto);
+    List<Map> getDonatePayment(Map dto);
+
 
 }

@@ -71,10 +71,25 @@ public class PaymentCTRL {
             ret.put("message","실패");
             return ResponseEntity.badRequest().body(ret);
         }
-
-
     }
 
+
+    @PostMapping("/withdraw")
+    ResponseEntity<?> withdraw(@RequestBody Map paymentInfo){
+
+        int res = payService.Withdraw(paymentInfo);
+
+        Map ret = new HashMap();
+
+        if(res == 1){
+            ret.put("message","성공");
+            return ResponseEntity.ok().body(ret);
+        }
+        else {
+            ret.put("message","실패");
+            return ResponseEntity.badRequest().body(ret);
+        }
+    }
 
 
 }
