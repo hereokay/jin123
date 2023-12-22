@@ -110,6 +110,9 @@ public class PayServiceImpl implements PayService {
         userInfo.put("payment_type",1);
 
         int ret = paymentMapper.userGeneralPayment(userInfo);
+        Map notiMap = new HashMap();
+        notiMap.put("payment_amount",coin*(-1));
+        notificationService.NotificationNoService(notiMap, PushMessage.DEPOSIT_NOTIFICATION);
         log.info("userinfo : {}",userInfo);
         return ret;
 
@@ -126,6 +129,9 @@ public class PayServiceImpl implements PayService {
 
 
         int ret = paymentMapper.userGeneralPayment(userInfo);
+        Map notiMap = new HashMap();
+        notiMap.put("payment_amount",coin);
+        notificationService.NotificationNoService(notiMap, PushMessage.WITHDRAW_NOTIFICATION);
 
         log.info("userinfo : {}",userInfo);
 
