@@ -1,8 +1,13 @@
 package com.muselive.bemuselive.service;
 
+import com.muselive.bemuselive.VO.ServiceDTO;
+import com.muselive.bemuselive.VO.User;
 import com.muselive.bemuselive.contract.InhaKrw;
+import com.muselive.bemuselive.mapper.ServiceMapper;
+import com.muselive.bemuselive.mapper.UserMapper;
 import jakarta.annotation.PostConstruct;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.web3j.abi.datatypes.Int;
@@ -14,6 +19,8 @@ import org.web3j.protocol.http.HttpService;
 
 import java.io.IOException;
 import java.math.BigInteger;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.web3j.tx.gas.DefaultGasProvider.GAS_LIMIT;
 import static org.web3j.tx.gas.DefaultGasProvider.GAS_PRICE;
@@ -26,6 +33,12 @@ public class EthereumService {
 
     @Value("${owner.private-key}")
     private String PRIVATE_KEY;
+
+    @Autowired
+    UserMapper userMapper;
+
+    @Autowired
+    ServiceMapper serviceMapper;
 
 
 
@@ -50,6 +63,18 @@ public class EthereumService {
         //TODO
         // 공개주소 to 조회
 
+
+        User user = null;
+
+        Map userinfo = new HashMap<>();
+        userinfo.put("school_id",school_id);
+
+
+        user = userMapper.getUserInfo(userinfo);
+
+        String to = user.getWallet_address();
+
+
         return contract.mint(to, BigInteger.valueOf(amount)).send();
     }
 
@@ -57,6 +82,20 @@ public class EthereumService {
 
         //TODO
         // from 주소 , to주소 조회
+
+        User user = null;
+        ServiceDTO serviceDTO = null;
+
+        Map paymentinfo = new HashMap<>();
+        paymentinfo.put("school_id",school_id);
+        paymentinfo.put("service_id",service_id);
+
+
+        user = userMapper.getUserInfo(paymentinfo);
+        serviceDTO = serviceMapper.getServiceInfo(paymentinfo);
+
+        String to = serviceDTO.getWallet_address();
+        String from = user.getWallet_address();
 
         return contract.transferFrom(from,to, BigInteger.valueOf(amount)).send();
     }
