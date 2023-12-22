@@ -10,6 +10,7 @@ import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.web3j.abi.datatypes.Bool;
 import org.web3j.abi.datatypes.Int;
 import org.web3j.crypto.Credentials;
 import org.web3j.protocol.Web3j;
@@ -60,8 +61,6 @@ public class EthereumService {
 
     public TransactionReceipt reqMint(int school_id, int amount) throws Exception {
 
-        //TODO
-        // 공개주소 to 조회
 
 
         User user = null;
@@ -80,8 +79,6 @@ public class EthereumService {
 
     public TransactionReceipt reqPay(int school_id, int service_id, Integer amount) throws Exception {
 
-        //TODO
-        // from 주소 , to주소 조회
 
         User user = null;
         ServiceDTO serviceDTO = null;
@@ -97,7 +94,9 @@ public class EthereumService {
         String to = serviceDTO.getWallet_address();
         String from = user.getWallet_address();
 
-        return contract.transferFrom(from,to, BigInteger.valueOf(amount)).send();
+
+        return contract.transferFrom(from, to, BigInteger.valueOf(amount)).send();
+
     }
 
 }
