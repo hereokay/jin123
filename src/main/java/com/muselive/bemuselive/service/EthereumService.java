@@ -45,11 +45,19 @@ public class EthereumService {
         return blockNumber.getBlockNumber();
     }
 
-    public TransactionReceipt reqMint(String to, Integer amount) throws Exception {
+    public TransactionReceipt reqMint(int school_id, int amount) throws Exception {
+
+        //TODO
+        // 공개주소 to 조회
+
         return contract.mint(to, BigInteger.valueOf(amount)).send();
     }
 
-    public TransactionReceipt reqPay(String from, String to, Integer amount) throws Exception {
+    public TransactionReceipt reqPay(int school_id, int service_id, Integer amount) throws Exception {
+
+        //TODO
+        // from 주소 , to주소 조회
+
         return contract.transferFrom(from,to, BigInteger.valueOf(amount)).send();
     }
 
