@@ -27,7 +27,7 @@ public class PaymentCTRL {
 
 
     @PostMapping(value = "/payment")
-    ResponseEntity<?> test(@RequestBody Map body) throws Exception {
+    ResponseEntity<?> payment(@RequestBody Map body) throws Exception {
 
         if(!body.containsKey("school_id")
                 || !body.containsKey("service_id")
@@ -42,7 +42,7 @@ public class PaymentCTRL {
         CompletableFuture<TransactionReceipt> future = CompletableFuture.supplyAsync(() ->
                 {
                     try {
-                        return ethereumService.reqPay(
+                        return ethereumService.reqPayment(
                                 (int) body.get("school_id"),
                                 (int) body.get("service_id"),
                                 (int) body.get("payment_amount")

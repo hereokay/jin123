@@ -66,6 +66,10 @@ public class LibraryBatchService {
                 continue;
             }
 
+            //Blockchain
+
+
+
             int paymentSuccess = paymentMapper.userGeneralPayment(payment_info);
 
             if(paymentSuccess != 1) {

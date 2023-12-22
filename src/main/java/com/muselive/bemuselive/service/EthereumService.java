@@ -93,7 +93,7 @@ public class EthereumService {
                 BigInteger.valueOf(amount).multiply(amountInWei)).send();
     }
 
-    public TransactionReceipt reqPay(int school_id, int service_id, Integer amount) throws Exception {
+    public TransactionReceipt reqPayment(int school_id, int service_id, Integer amount) throws Exception {
 
 
         User user = null;
