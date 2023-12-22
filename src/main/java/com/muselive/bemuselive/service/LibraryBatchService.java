@@ -1,6 +1,7 @@
 package com.muselive.bemuselive.service;
 
 import com.muselive.bemuselive.VO.User;
+import com.muselive.bemuselive.common.util.PushMessage;
 import com.muselive.bemuselive.mapper.LibraryMapper;
 import com.muselive.bemuselive.mapper.PaymentMapper;
 import com.muselive.bemuselive.mapper.UserMapper;
@@ -25,6 +26,9 @@ public class LibraryBatchService {
     @Autowired
     PaymentMapper paymentMapper;
 
+    @Autowired
+    NotificationService notificationService;
+
     public final Integer PAYMENT_TYPE = 2;
     public final Integer SERVICE_ID = 2;
 
@@ -48,26 +52,27 @@ public class LibraryBatchService {
                 continue;
             }
 
+            payment_info.put("school_id",user.getSchool_id());
+            payment_info.put("service_id",SERVICE_ID);
+            payment_info.put("payment_amount",total_fees);
+            payment_info.put("payment_type",PAYMENT_TYPE);
+
             if(user == null){
                 log.error("null값 오류");
                 continue;
             }
             else if( user.getBalance() < total_fees){
-                log.error("잔액 부족 오류");
+                notificationService.Notification(payment_info,PushMessage.NO_BALANCE_NOTIFICATION);
                 continue;
             }
-            else {
-                payment_info.put("school_id",user.getSchool_id());
-                payment_info.put("service_id",SERVICE_ID);
-                payment_info.put("payment_amount",total_fees);
-                payment_info.put("payment_type",PAYMENT_TYPE);
-            }
+
             int paymentSuccess = paymentMapper.userGeneralPayment(payment_info);
 
             if(paymentSuccess != 1) {
                 log.error("입력 실패");
                 continue;
             }
+            notificationService.Notification(payment_info, PushMessage.LIBRARY_LATE_FEE_NOTIFICATION);
 
             int updateSuccess = libraryMapper.updateComplete(late_fee_info);
             if(updateSuccess == 1){

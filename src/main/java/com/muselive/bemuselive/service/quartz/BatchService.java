@@ -13,7 +13,7 @@ public class BatchService {
     @PostConstruct
     public void init(){
         try{
-            quartzService.addCronJob(QuartzJob.class,"QuartzServiceScheduler","QuartzServiceScheduler",null,"0/10 * * * * ?");
+            quartzService.addCronJob(QuartzJob.class,"QuartzServiceScheduler","QuartzServiceScheduler",null,"0 0/1 * * * ?");
         }catch (SchedulerException e){
             e.printStackTrace();
         }
