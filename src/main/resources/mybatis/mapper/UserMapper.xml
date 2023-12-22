@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.muselive.bemuselive.mapper.UserMapper">
+
+
+    <select id="getUserInfo" resultType="com.muselive.bemuselive.VO.User" parameterType="map">
+
+        select *
+        from USER_TB
+        where school_id = #{school_id}
+
+    </select>
+
+
+
+</mapper>
+
+
