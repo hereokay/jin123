@@ -3,6 +3,7 @@ package com.muselive.bemuselive.service;
 
 import com.muselive.bemuselive.VO.ServiceDTO;
 import com.muselive.bemuselive.VO.User;
+import com.muselive.bemuselive.common.util.PushMessage;
 import com.muselive.bemuselive.mapper.PaymentMapper;
 import com.muselive.bemuselive.mapper.ServiceMapper;
 import com.muselive.bemuselive.mapper.UserMapper;
@@ -27,6 +28,9 @@ public class PayServiceImpl implements PayService {
     
     @Autowired
     ServiceMapper serviceMapper;
+
+    @Autowired
+    NotificationService notificationService;
 
 
     @Override
@@ -74,6 +78,7 @@ public class PayServiceImpl implements PayService {
         else if(  user.getBalance() < pay_amount){
             returnMap.put("status",0);
             returnMap.put("message","잔액 부족 오류");
+            notificationService.Notification(payment_info, PushMessage.NO_BALANCE_NOTIFICATION);
             return returnMap;
         }
         else {
@@ -81,9 +86,8 @@ public class PayServiceImpl implements PayService {
             payment_info.put("payment_type",serviceDTO.getPayment_type());
         }
 
-
         int paymentSuccess = paymentMapper.userGeneralPayment(payment_info);
-
+        notificationService.Notification(payment_info, PushMessage.PAYMENT_NOTIFICATION);
 
         if(paymentSuccess == 1){
             returnMap.put("status",1);
